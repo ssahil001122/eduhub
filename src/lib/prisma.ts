@@ -1,4 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaD1 } from "@prisma/adapter-d1";
+
+// For Cloudflare D1
+export const getPrisma = (db?: D1Database) => {
+  if (db) {
+    const adapter = new PrismaD1(db);
+    return new PrismaClient({ adapter });
+  }
+  return new PrismaClient();
+};
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -6,8 +16,8 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    // log: ["query"],
-  });
+  (process.env.NODE_ENV === "production"
+    ? new PrismaClient()
+    : new PrismaClient());
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
