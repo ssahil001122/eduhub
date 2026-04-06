@@ -1,9 +1,14 @@
 import NextAuth from "next-auth";
-// Removed unused duplicate
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
 import { authConfig } from "./auth.config";
 import Credentials from "next-auth/providers/credentials";
+
+// Mock users for Cloudflare Demo
+const MOCK_USERS = [
+  { id: "1", name: "Admin", email: "admin@eduhub.com", role: "admin", password: "password123" },
+  { id: "2", name: "Teacher", email: "teacher@eduhub.com", role: "teacher", password: "password123" },
+  { id: "3", name: "Accountant", email: "accountant@eduhub.com", role: "accountant", password: "password123" },
+  { id: "4", name: "Student", email: "student@eduhub.com", role: "student", password: "password123" },
+];
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
@@ -18,20 +23,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        });
+        const user = MOCK_USERS.find(u => u.email === credentials.email);
 
-        if (!user) {
-          return null;
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password_hash
-        );
-
-        if (!isPasswordValid) {
+        if (!user || user.password !== credentials.password) {
           return null;
         }
 
