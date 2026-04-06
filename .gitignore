@@ -40,7 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-<<<<<<< HEAD
 # OpenNext
 .open-next
 
@@ -49,6 +48,8 @@ next-env.d.ts
 .dev.vars*
 !.dev.vars.example
 !.env.example
-=======
+
+# prisma
 /src/generated/prisma
->>>>>>> 6988a46 (Phase 2: Authentication & Dashboard Foundation)
+*.db
+*.sqlite
